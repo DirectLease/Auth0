@@ -1,0 +1,17 @@
+---
+Name: auth0
+After:
+  - 'framework/*'
+---
+Auth0:
+  url: ''
+  tenant: ''
+  client_id: '' 
+  client_secret: ''
+  audience: ''
+Director:
+  rules:
+    'Auth0ApiController': 'Auth0ApiController'
+Member:
+  extensions:
+    - Auth0MemberExtension
