@@ -24,7 +24,7 @@ class Auth0ApiController extends Controller
     public function loginFromAuth0(SS_HTTPRequest $request)
     {
 
-        $safeTentant = str_replace(".", "_", Auth0::config()->tenant);
+        $safeNamespace = str_replace(".", "_", Auth0::config()->namespace);
 
         try
         {
@@ -54,7 +54,7 @@ class Auth0ApiController extends Controller
         }
         $socialId = isset($user['third_party_id']) ? $user['third_party_id'] : null;
 
-        $metadata = isset($user[$safeTentant . '/user_metadata']) ? $user[$safeTentant . '/user_metadata'] : null;
+        $metadata = isset($user[$safeNamespace . '/user_metadata']) ? $user[$safeNamespace . '/user_metadata'] : null;
 
 
         /* @var $singl Member */

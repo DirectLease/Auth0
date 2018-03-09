@@ -5,7 +5,7 @@ After:
 ---
 Auth0:
   url: ''
-  tenant: ''
+  namespace: ''
   client_id: '' 
   client_secret: ''
   audience: ''
