@@ -5,6 +5,10 @@ This a Silverstripe 3 Module for Auth0 that works in combination with the Auth0 
 
 [Auth0 Lock Docs with examples](https://auth0.com/docs/libraries/lock)
 
+## Installation  
+
+composer require directlease/auth0
+
 
 ## Config
 
