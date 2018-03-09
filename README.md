@@ -9,7 +9,7 @@ This a Silverstripe 3 Module for Auth0 that works in combination with the Auth0 
 ## Config
 
 You can put your auth0 information the 
-[config file](../_config/auth0.yml)
+[config file](_config/auth0.yml)
 
 The follow fields need to be filled:
 
