@@ -3,7 +3,7 @@
 	"description": "Silverstripe module for Auth0 that works in combination with the Auth0 Lock.",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "auth0", "authentication"],
-	"license": "GNU General Public License v3.0",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Arno Bor",
