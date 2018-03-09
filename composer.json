@@ -1,0 +1,27 @@
+{
+	"name": "directlease/auth0",
+	"description": "Silverstripe module for Auth0 that works in combination with the Auth0 Lock.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "auth0", "authentication"],
+	"license": "GNU General Public License v3.0",
+	"authors": [
+		{
+			"name": "Arno Bor",
+			"email": "arno@directlease.nl"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/DirectLease/Auth0/issues"
+	},
+	"require": {
+		"silverstripe/framework": "3.*",
+		"silverstripe/cms": "3.*",
+		"composer/installers": "*"
+	},
+	"extra": {
+		"installer-name": "auth0",
+		"branch-alias": {
+			"dev-master": "1.x-dev"
+		}
+	}
+}
