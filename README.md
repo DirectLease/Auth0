@@ -11,7 +11,7 @@ This a Silverstripe 3 Module for Auth0 that works in combination with the Auth0 
 You can put your auth0 information the 
 [config file](_config/auth0.yml)
 
-The follow fields need to be filled:
+The following fields need to be filled:
 
 * URL
 * Namespace
