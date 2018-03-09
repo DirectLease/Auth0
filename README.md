@@ -21,11 +21,12 @@ The following fields need to be filled:
 
 You can find these in your client settings in Auth0
 
-**URL**
+**URL**  
 This is the Domain field in Auth0
 
-**Namespace**
-This value is used to parse your user_metadata and (in the upcoming version) app_metadata if you use an auth0 Rule to namespace your user_metadata. If you don't use a Rule you can leave this as an empty string.
+**Namespace**  
+This value is used to parse your user metadata and (in the upcoming version) app metadata.  
+If you use an auth0 Rule to namespace your user_metadata. If you don't use a Rule you can leave this as an empty string.
 
 We have the following Rule active in Auth0
 
@@ -41,18 +42,18 @@ We have the following Rule active in Auth0
 
 So our namespace value would be 'https://test.directlease.com'  (ignoring the last backslash from the rule)
 
-**Client_id**
+**Client_id**  
 The client id of your auth0 client
 
-**Client_secret**
+**Client_secret**  
 The client secret of your auth0 client
 
-**Audience**
+**Audience**  
 The URL you want to use as your Auth0 audience
 
 ## Setup
 
-You need to register for an account at Auth0 and setup a tenant.
+You need to register for an account at Auth0 and setup a tenant.  
 Next you need to setup a client for your tenant.
 
 Set the Allowed Callback URLs and Connections for your client 
