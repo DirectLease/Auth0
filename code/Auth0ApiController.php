@@ -175,8 +175,15 @@ class Auth0ApiController extends Controller
             $client_secret = Auth0::config()->client_secret;
             $audience = Auth0::config()->audience;
 
-            $postfields = "{\"client_id\":\"" . $client_id . "\",\"client_secret\":\"" . $client_secret . "\",\"audience\":\"" . $audience . "\",\"grant_type\":\"client_credentials\"}";
+            $fields = array(
+                'client_id' => $client_id,
+                'client_secret' => $client_secret,
+                'audience' => $audience,
+                'grant_type' => 'client_credentials'
+            );
 
+            $postfields = json_encode($fields);
+            
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url . "/oauth/token",
@@ -225,13 +232,19 @@ class Auth0ApiController extends Controller
         $token = self::getAuth0Token();
         $curl = curl_init();
 
+        $fields = array(
+            'client_id' => $client_id,
+            'user_metadata' => json_encode($metadata)
+        );
+
         if ($connection)
         {
-            $postfields = "{\"client_id\":\"" . $client_id . "\", \"connection\":\"" . $connection . "\", \"email\":\"" . $email . "\", \"email_verified\":true, \"user_metadata\": " . json_encode($metadata) . " }";
-        } else
-        {
-            $postfields = "{\"client_id\":\"" . $client_id . "\", \"user_metadata\": " . json_encode($metadata) . " }";
+            $fields["connection"] = $connection;
+            $fields["email"] = $email;
+            $fields["email_verified"] = true;
         }
+
+        $postfields = json_encode($fields);
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url . "/api/v2/users/" . $id,
