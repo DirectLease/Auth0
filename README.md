@@ -18,7 +18,6 @@ You can put your auth0 information the
 The following fields need to be filled:
 
 * URL
-* Namespace
 * Client_id
 * Client_secret
 * Audience
@@ -27,24 +26,6 @@ You can find these in your client settings in Auth0
 
 **URL**  
 This is the Domain field in Auth0
-
-**Namespace**  
-This value is used to parse your user metadata and (in the upcoming version) app metadata.  
-If you use an auth0 Rule to namespace your user_metadata. If you don't use a Rule you can leave this as an empty string.
-
-We have the following Rule active in Auth0
-
-```javascript
- function (user, context, callback) {
-    var namespace = 'https://test.directlease.com/';
-    if (context.idToken && user.user_metadata) {
-      context.idToken[namespace + 'user_metadata'] = user.user_metadata;
-    }
-    callback(null, user, context);
-  }
-```
-
-So our namespace value would be 'https://test.directlease.com'  (ignoring the last backslash from the rule)
 
 **Client_id**  
 The client id of your auth0 client

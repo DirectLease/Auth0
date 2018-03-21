@@ -24,8 +24,6 @@ class Auth0ApiController extends Controller
     public function loginFromAuth0(SS_HTTPRequest $request)
     {
 
-        $safeNamespace = str_replace(".", "_", Auth0::config()->namespace);
-
         try
         {
             $user = $request->postVars();
@@ -41,21 +39,13 @@ class Auth0ApiController extends Controller
         $last_update = isset($user['updated_at']) ? $user['updated_at'] : null;
         $email = isset($user['email']) ? $user['email'] : null;
         $email_verified = isset($user['email_verified']) ? $user['email_verified'] : null;
-        $name = isset($user['name']) ? $user['name'] : null;
-        $given_name = isset($user['given_name']) ? $user['given_name'] : null;
-        $family_name = isset($user['family_name']) ? $user['family_name'] : null;
-        $gender = isset($user['gender']) ? $user['gender'] : null;
         $locale = isset($user['locale']) ? $user['locale'] : null;
-        $nickname = isset($user['nickname']) ? $user['nickname'] : null;
         $avatar = isset($user['picture_large']) ? $user['picture_large'] : null;
         if (!$avatar)
         {
             $avatar = isset($user['picture']) ? $user['picture'] : null;
         }
         $socialId = isset($user['third_party_id']) ? $user['third_party_id'] : null;
-
-        $metadata = isset($user[$safeNamespace . '/user_metadata']) ? $user[$safeNamespace . '/user_metadata'] : null;
-
 
         /* @var $singl Member */
         $singl = singleton('Member');
@@ -225,7 +215,8 @@ class Auth0ApiController extends Controller
 
         $user = $resource->postVars();
         $id = isset($user['sub']) ? $user['sub'] : null;
-        $metadata = isset($user['user_metadata']) ? $user['user_metadata'] : null;
+        $user_metadata = isset($user['user_metadata']) ? $user['user_metadata'] : null;
+        $app_metadata = isset($user['app_metadata']) ? $user['app_metadata'] : null;
         $connection = isset($user['connection']) ? $user['connection'] : null;
         $email = isset($user['email']) ? $user['email'] : null;
 
@@ -234,7 +225,8 @@ class Auth0ApiController extends Controller
 
         $fields = array(
             'client_id' => $client_id,
-            'user_metadata' => json_encode($metadata)
+            'user_metadata' => json_encode($user_metadata),
+            'app_metadata' => json_encode($app_metadata)
         );
 
         if ($connection)
