@@ -1,16 +1,21 @@
 ---
+Name: auth0routes
+After:
+  - 'rootroutes'
+---
+SilverStripe\Control\Director:
+  rules:
+    'api//loginFromAuth0': 'DirectLease\Auth0\ApiController'
+    'api//updateToAuth0': 'DirectLease\Auth0\ApiController'
+---
 Name: auth0
 After:
-  - 'framework/*'
+  - '#coresecurity'
 ---
-Auth0:
-  url: ''
-  client_id: '' 
-  client_secret: ''
-  audience: ''
-Director:
-  rules:
-    'Auth0ApiController': 'Auth0ApiController'
-Member:
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Security\MemberAuthenticator\MemberLoginForm:
+    class: 'DirectLease\Auth0\LoginForm'
+
+SilverStripe\Security\Member:
   extensions:
-    - Auth0MemberExtension
+    - DirectLease\Auth0\Extensions\MemberExtension

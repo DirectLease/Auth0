@@ -1,0 +1,19 @@
+---
+Name: myproject
+---
+DirectLease\Auth0\LoginForm:
+  domain: 'Your auth0 application domain'
+  client_id: 'Your auth0 application client id'
+
+DirectLease\Auth0\ApiController:
+  client_id: 'Your auth0 application client id'
+  client_secret: 'Your auth0 application client secret'
+  audience: 'Your auth0 application audience'
+  url: 'Your auth0 application url'
+  default_mailaddress: 'The emailaddress you want to use for your default SilverStripe user'
+  namespace: 'The namespace you use in your auth0 application rules'
+
+DirectLease\Auth0\Extensions\MemberExtension:
+  properties:
+    OptionalDefaultFields: 'Default Value'
+
