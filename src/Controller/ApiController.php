@@ -2,8 +2,10 @@
 
 namespace DirectLease\Auth0;
 
+use Auth0\SDK\Auth0;
+use GuzzleHttp;
+use GuzzleHttp\Exception\ClientException;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
@@ -20,13 +22,24 @@ class ApiController extends Controller
 
     /** @var array $allowed_actions */
     private static $allowed_actions = array(
-        'loginFromAuth0',
-        'updateToAuth0',
+        'login',
+        'callback',
+        'updateUserMetadata',
         'resendVerificationMail',
+        'checkAndCreateAuth0UserAccount',
     );
 
 
-    private $member = null;
+    private $member;
+    private $auth0;
+    private $domain;
+    private $client_id;
+    private $client_secret;
+    private $redirect_uri;
+    private $scope;
+    private $default_email;
+    private $namespace;
+    private $url;
 
     public function __construct()
     {
@@ -37,22 +50,42 @@ class ApiController extends Controller
         if($user) {
             $this->member = $user;
         }
+
+        $this->domain = $this->config()->get('domain');
+        $this->client_id = $this->config()->get('client_id');
+        $this->client_secret = $this->config()->get('client_secret');
+        $this->redirect_uri = $this->config()->get('redirect_uri');
+        $this->scope = $this->config()->get('scope');
+        $this->default_email = $this->config()->get('default_mailaddress');
+        $this->namespace = $this->config()->get('namespace');
+        $this->url = 'https://' . $this->config()->get('domain');
+
+    }
+
+    public function login() {
+        $redirect_to = $this->request->getVar('redirect_to');
+
+        $this->setup($redirect_to);
+
+        $this->auth0->login();
     }
 
     /**
-     * After login with the Auth0 Lock this function is called with the user info from auth0
-     *
-     * @param HTTPRequest $request
+     * Get the authenticated user and login in SS
      *
      * @return bool
+     * @throws \Auth0\SDK\Exception\ApiException
+     * @throws \Auth0\SDK\Exception\CoreException
      */
-    public function loginFromAuth0(HTTPRequest $request)
+    public function callback()
     {
-        $user = json_decode($request->getBody(), true);
+        $this->setup();
+        $redirect_to = $this->request->getVar('redirect_to');
+        $user = $this->auth0->getUser();
         $default_mailaddress = $this->getDefaultMailaddress();
         // the namespace is set in the Auth0 rule for
         // adding app_metadata and user_metadata to the response
-        $namespace = $this->config()->get('namespace');
+        $namespace = $this->namespace;
 
         if (!$user) {
             return false;
@@ -89,7 +122,11 @@ class ApiController extends Controller
 
         self::updateUserData($user, false);
 
-        return true;
+//        var_dump($user);
+//        var_dump($member);
+//        die();
+
+        $this->redirect($redirect_to);
     }
 
     /**
@@ -97,18 +134,18 @@ class ApiController extends Controller
      * @param $password
      * @return mixed
      */
-    public function checkAuth0UserAccount($email, $password) {
+    public function checkAndCreateAuth0UserAccount() {
+        $email = $this->request->postVar('email');
+        $password = $this->request->postVar('password');
         $email_string = ':"' . $email . '"';
         $query_string = 'email' . urlencode($email_string) . '&search_engine=v3';
 
-        $response = $this->execute_curl("/api/v2/users?q=" . $query_string, "GET");
+        $response = $this->call_auth0("/api/v2/users?q=" . $query_string, "GET");
 
-        $auth0user = json_decode($response);
-
-        if (empty($auth0user)) {
+        if (empty($response)) {
             return self::createAuth0UserAccount($email, $password);
         } else {
-            return $auth0user[0]->user_id;
+            return $response[0]->user_id;
         }
     }
 
@@ -121,8 +158,6 @@ class ApiController extends Controller
      */
     public function updateUserMetadata($input)
     {
-        $client_id = $this->config()->get('client_id');
-
         $id = isset($input['sub']) ? $input['sub'] : null;
         $user_metadata = isset($input['user_metadata']) ? $input['user_metadata'] : null;
         $app_metadata = isset($input['app_metadata']) ? $input['app_metadata'] : null;
@@ -130,7 +165,7 @@ class ApiController extends Controller
         $email = isset($input['email']) ? $input['email'] : null;
 
         $fields = array(
-            'client_id'     => $client_id,
+            'client_id'     => $this->client_id,
             'user_metadata' => $user_metadata,
             'app_metadata'  => $app_metadata
         );
@@ -141,7 +176,7 @@ class ApiController extends Controller
             $fields["email_verified"] = true;
         }
 
-        return $this->execute_curl("/api/v2/users/" . $id, "PATCH", $fields);
+        return $this->call_auth0("/api/v2/users/" . $id, "PATCH", $fields);
     }
 
     public function resendVerificationMail()
@@ -159,7 +194,9 @@ class ApiController extends Controller
             'user_id' => $id,
         );
 
-        return $this->execute_curl("/api/v2/jobs/verification-email", "POST", $fields);
+        $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
+
+        // TODO: redirect user somewhere?
     }
 
     /**
@@ -226,11 +263,17 @@ class ApiController extends Controller
      * @param $password
      * @return mixed
      */
-    private function createAuth0UserAccount($email, $password) {
-        $url = $this->config()->get('url');
+    private function createAuth0UserAccount($email, $password)
+    {
 
         $token = self::getAuth0Token();
-        $curl = curl_init();
+
+        $client = new GuzzleHttp\Client();
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token->access_token,
+            'Accept'        => 'application/json',
+        ];
 
         // The username field only works if it is enabled in auth0 -> connections -> database
         $fields = array(
@@ -240,39 +283,26 @@ class ApiController extends Controller
             'password' => $password
         );
 
-        $postfields = json_encode($fields);
+        $auth0user = null;
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $url . "/api/v2/users",
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => $postfields,
-            CURLOPT_HTTPHEADER => array(
-                "authorization: Bearer " . $token->access_token,
-                "content-type: application/json"
-            ),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        ));
+        try {
+            $result = $client->request('POST', $this->url . "/api/v2/users", [
+                'headers'       => $headers,
+                'json'          => $fields
+            ]);
 
-        $response = curl_exec($curl);
-
-        // Check if any error occurred
-        if (!curl_errno($curl)) {
-            $info = curl_getinfo($curl);
-            if($info['http_code'] == 201) {
-                $auth0user = json_decode($response);
-            } else if ($info['http_code'] == 409) {
+            $auth0user = $result->getBody()->getContents();
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() == 409) {
                 // User already exist
                 $auth0user = true;
+            } else if ($e->getResponse()->getStatusCode() == 400) {
+                // Mostlikely password is too weak
+                return $e->getResponse()->getBody()->getContents();
             } else {
                 $auth0user = false;
             }
         }
-
-        curl_close($curl);
 
         if($auth0user && is_object($auth0user)) {
             return $auth0user->user_id;
@@ -289,36 +319,21 @@ class ApiController extends Controller
      */
     private function getAuth0Token()
     {
+        // TODO: sanity check for m2m config settings
         $fields = array(
-            'client_id' => $this->config()->get('client_id'),
-            'client_secret' => $this->config()->get('client_secret'),
-            'audience' => $this->config()->get('audience'),
+            'client_id' => $this->config()->get('m2m_client_id'),
+            'client_secret' => $this->config()->get('m2m_client_secret'),
+            'audience' => $this->url . '/api/v2/',
             'grant_type' => 'client_credentials'
         );
 
-        $postfields = json_encode($fields);
+        $client = new GuzzleHttp\Client();
 
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->config()->get('url') . "/oauth/token",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => $postfields,
-            CURLOPT_HTTPHEADER => array(
-                "content-type: application/json"
-            ),
-        ));
+        $result = $client->request('POST', $this->url . "/oauth/token", [
+            'json' => $fields
+        ]);
 
-        $token = curl_exec($curl);
-        curl_close($curl);
-
-        $token = json_decode($token);
-
-        return $token;
+        return json_decode($result->getBody()->getContents());
     }
 
     /**
@@ -344,7 +359,7 @@ class ApiController extends Controller
      */
     private function getDefaultMailaddress()
     {
-        $address = $this->config()->get('default_mailaddress');
+        $address = $this->default_email;
         if($address) {
             return $address;
         } else {
@@ -352,34 +367,36 @@ class ApiController extends Controller
         }
     }
 
-    private function execute_curl($url, $type, array $fields = []) {
-        $base_url = $this->config()->get('url');
+    private function call_auth0($uri, $type, array $fields = [])
+    {
         $token = self::getAuth0Token();
 
-        $postfields = json_encode($fields);
+        $client = new GuzzleHttp\Client();
 
-        $curl = curl_init();
+        $headers = [
+            'Authorization' => 'Bearer ' . $token->access_token,
+            'Accept'        => 'application/json',
+        ];
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $base_url . $url,
-            CURLOPT_CUSTOMREQUEST => $type,
-            CURLOPT_POSTFIELDS => $postfields,
-            CURLOPT_HTTPHEADER => array(
-                "authorization: Bearer " . $token->access_token,
-                "content-type: application/json"
-            ),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        ));
+        $result = $client->request($type, $this->url . $uri, [
+            'headers'       => $headers,
+            'json'          => $fields
+        ]);
 
-        $response = curl_exec($curl);
+        return json_decode($result->getBody()->getContents());
+    }
 
-        curl_close($curl);
+    private function setup($url = null)
+    {
+        $redirect = $this->redirect_uri  .= '?redirect_to=' . $url;
 
-        return $response;
+        $this->auth0 = new Auth0([
+            'domain' => $this->domain,
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'redirect_uri' => $redirect,
+            'scope' => $this->scope,
+        ]);
     }
 
 }

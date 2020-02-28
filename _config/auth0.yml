@@ -12,10 +12,6 @@ Name: auth0
 After:
   - '#coresecurity'
 ---
-SilverStripe\Core\Injector\Injector:
-  SilverStripe\Security\MemberAuthenticator\MemberLoginForm:
-    class: 'DirectLease\Auth0\LoginForm'
-
 SilverStripe\Security\Member:
   extensions:
     - DirectLease\Auth0\Extensions\MemberExtension
