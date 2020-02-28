@@ -1,6 +1,6 @@
 {
 	"name": "directlease/auth0",
-	"description": "Silverstripe module for Auth0 that works in combination with the Auth0 Lock.",
+	"description": "Silverstripe module for Auth0 with the Universal Login",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "auth0", "authentication"],
 	"license": "GPL-3.0-or-later",
@@ -14,9 +14,11 @@
 		"issues": "https://github.com/DirectLease/Auth0/issues"
 	},
 	"require": {
-		"silverstripe/framework": "3.*",
-		"silverstripe/cms": "3.*",
-		"composer/installers": "*"
+		"silverstripe/framework": "4.*",
+		"silverstripe/versioned": "^1.0",
+		"silverstripe/vendor-plugin": "^1.0",
+		"auth0/auth0-php": "^5.7",
+		"guzzlehttp/guzzle": "^6.5"
 	},
 	"extra": {
 		"installer-name": "auth0",

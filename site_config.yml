@@ -1,0 +1,18 @@
+---
+Name: myproject
+---
+
+DirectLease\Auth0\ApiController:
+  client_id: 'Your Auth0 application client id'
+  m2m_client_id: 'Your Auth0 M2M application client id'
+  client_secret: 'Your Auth0 application client secret'
+  m2m_client_secret: 'Your auth0 M2M application client secret'
+  domain: 'Your Auth0 application domain'
+  redirect_uri: 'The Auth0 callback url, needs to be a full URL - http://mysite.com/auth/callback'
+  scope: 'The scope of the user object you get back - openid email profile'
+  default_mailaddress: 'The emailaddress you want to use for your default SilverStripe user'
+  namespace: 'The namespace you use in your auth0 application rules'
+
+DirectLease\Auth0\Extensions\MemberExtension:
+  properties:
+    OptionalDefaultFields: 'Default Value'
