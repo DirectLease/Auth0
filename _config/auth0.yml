@@ -5,8 +5,11 @@ After:
 ---
 SilverStripe\Control\Director:
   rules:
-    'api//loginFromAuth0': 'DirectLease\Auth0\ApiController'
-    'api//updateToAuth0': 'DirectLease\Auth0\ApiController'
+    'auth//login': 'DirectLease\Auth0\ApiController'
+    'auth//callback': 'DirectLease\Auth0\ApiController'
+    'auth//checkAndCreateAuth0UserAccount': 'DirectLease\Auth0\ApiController'
+    'auth//updateUserMetadata': 'DirectLease\Auth0\ApiController'
+    'auth//resendVerificationMail': 'DirectLease\Auth0\ApiController'
 ---
 Name: auth0
 After:
