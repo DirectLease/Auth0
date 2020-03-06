@@ -51,3 +51,15 @@ You need to configure the Allowed Logout URLs in your tenant settings to make th
 
 What we have done is make /Security/login the leading URL for all login actions. 
 We use the BackURL from SS to redirect the user, once he logged in with the Auth0 Lock, back to the page he wanted to visit. 
+
+
+
+## V4 updates
+
+Redirecting post login:
+send the user to the login url (/auth/login) and append ?redirect_to= with your desired URL.
+It can be a local url then you just pass /home or /welcome or external https://www.github.com
+
+if you want to use the verifcation email and other functions that require tokens
+You must create an Machine to Machine (M2M) Application in your Auth0 Tenant
+And enable the Management API on that application with the correct scopes.
