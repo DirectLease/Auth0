@@ -64,58 +64,58 @@ class MemberExtension extends DataExtension
         return $this->auth0Id;
     }
 
-    public function setFirstname($name)
+    public function setAuth0Firstname($name)
     {
         $this->firstname = $name;
         $this->updateSession('firstname', $name);
     }
 
-    public function getFirstname()
+    public function getAuth0Firstname()
     {
-        return $this->firstname;
+        return $this->owner->Firstname;
     }
 
-    public function setMiddlename($name)
+    public function setAuth0Middlename($name)
     {
         $this->middlename = $name;
         $this->updateSession('middlename', $name);
     }
 
-    public function getMiddlename()
+    public function getAuth0Middlename()
     {
         return $this->middlename;
     }
 
-    public function setLastname($name)
+    public function setAuth0Lastname($name)
     {
         $this->lastname = $name;
         $this->updateSession('lastname', $name);
     }
 
-    public function getLastname()
+    public function getAuth0Lastname()
     {
         return $this->lastname;
     }
 
-    public function setEmail($email)
+    public function setAuth0Email($email)
     {
         $this->email = $email;
         $this->updateSession('email', $email);
     }
 
-    public function getEmail()
+    public function getAuth0Email()
     {
         return $this->email;
     }
 
-    public function getFullName()
+    public function getAuth0FullName()
     {
-        if ($middlename = $this->getMiddlename()) {
+        if ($middlename = $this->getAuth0Middlename()) {
             $middlename = ' ' . $middlename . ' ';
         } else {
             $middlename = ' ';
         }
-        return $this->getFirstname() . $middlename . $this->getLastName();
+        return $this->getAuth0Firstname() . $middlename . $this->getAuth0LastName();
     }
 
     private function getSession()
@@ -144,16 +144,16 @@ class MemberExtension extends DataExtension
                     $this->setAuth0Id($value);
                     break;
                 case 'firstname':
-                    $this->setFirstname($value);
+                    $this->setAuth0Firstname($value);
                     break;
                 case 'middlename':
-                    $this->setMiddlename($value);
+                    $this->setAuth0Middlename($value);
                     break;
                 case 'lastname':
-                    $this->setLastname($value);
+                    $this->setAuth0Lastname($value);
                     break;
                 case 'email':
-                    $this->setEmail($value);
+                    $this->setAuth0Email($value);
                     break;
                 default:
                     $this->setProperty($key, $value);
