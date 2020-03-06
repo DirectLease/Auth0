@@ -237,10 +237,10 @@ class ApiController extends Controller
         }
 
         $current_user->setAuth0Id($id);
-        $current_user->setFirstname($firstname);
-        $current_user->setMiddlename($middlename);
-        $current_user->setLastname($lastname);
-        $current_user->setEmail($mail);
+        $current_user->setAuth0Firstname($firstname);
+        $current_user->setAuth0Middlename($middlename);
+        $current_user->setAuth0Lastname($lastname);
+        $current_user->setAuth0Email($mail);
 
         if ($user_metadata) {
             self::parseMetadata($user_metadata);
