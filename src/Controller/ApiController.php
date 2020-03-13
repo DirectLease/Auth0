@@ -2,10 +2,13 @@
 
 namespace DirectLease\Auth0;
 
+use Auth0\SDK\API\Authentication;
 use Auth0\SDK\Auth0;
+use Auth0\SDK\Exception\CoreException;
 use GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
@@ -23,9 +26,10 @@ class ApiController extends Controller
     /** @var array $allowed_actions */
     private static $allowed_actions = array(
         'login',
+        'logout',
         'callback',
         'updateUserMetadata',
-        'resendVerificationMail',
+        'sendVerificationMail',
         'checkAndCreateAuth0UserAccount',
     );
 
@@ -62,12 +66,34 @@ class ApiController extends Controller
 
     }
 
-    public function login() {
+    public function login()
+    {
         $redirect_to = $this->request->getVar('redirect_to');
+
+        // Logging in and out could lead to invalid states (due to browser cache)
+        // So we are now making sure every login request is unique
+        if (!$this->request->getVar('uid'))
+        {
+            return $this->redirect('/auth/login?redirect_to=' . $redirect_to . '&uid=' . uniqid());
+        }
 
         $this->setup($redirect_to);
 
         $this->auth0->login();
+    }
+
+    public function logout()
+    {
+        $identityStore = Injector::inst()->get(IdentityStore::class);
+        $identityStore->logOut($this->request);
+
+        $auth_api = new Authentication($this->domain, $this->client_id);
+
+        $this->setup();
+
+        $this->auth0->logout();
+
+        $this->redirect($auth_api->get_logout_link(Director::absoluteBaseURL(), $this->client_id));
     }
 
     /**
@@ -82,7 +108,6 @@ class ApiController extends Controller
         $this->setup();
         $redirect_to = $this->request->getVar('redirect_to');
         $user = $this->auth0->getUser();
-        $default_mailaddress = $this->getDefaultMailaddress();
         // the namespace is set in the Auth0 rule for
         // adding app_metadata and user_metadata to the response
         $namespace = $this->namespace;
@@ -108,6 +133,7 @@ class ApiController extends Controller
             $identityStore->logIn($existingUser);
             $this->member = $existingUser;
         } else {
+            $default_mailaddress = $this->getDefaultMailaddress();
             $filters['Email'] = $default_mailaddress;
 
             $member = Member::get()->filterAny($filters)->first();
@@ -122,10 +148,6 @@ class ApiController extends Controller
 
         self::updateUserData($user, false);
 
-//        var_dump($user);
-//        var_dump($member);
-//        die();
-
         $this->redirect($redirect_to);
     }
 
@@ -134,7 +156,8 @@ class ApiController extends Controller
      * @param $password
      * @return mixed
      */
-    public function checkAndCreateAuth0UserAccount() {
+    public function checkAndCreateAuth0UserAccount()
+    {
         $email = $this->request->postVar('email');
         $password = $this->request->postVar('password');
         $email_string = ':"' . $email . '"';
@@ -179,7 +202,7 @@ class ApiController extends Controller
         return $this->call_auth0("/api/v2/users/" . $id, "PATCH", $fields);
     }
 
-    public function resendVerificationMail()
+    public function sendVerificationMail()
     {
         $member = $this->member;
 
@@ -194,9 +217,8 @@ class ApiController extends Controller
             'user_id' => $id,
         );
 
-        $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
+        return $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
 
-        // TODO: redirect user somewhere?
     }
 
     /**
@@ -245,6 +267,7 @@ class ApiController extends Controller
         if ($user_metadata) {
             self::parseMetadata($user_metadata);
         }
+
         if ($app_metadata) {
             self::parseMetadata($app_metadata);
         }
@@ -265,7 +288,6 @@ class ApiController extends Controller
      */
     private function createAuth0UserAccount($email, $password)
     {
-
         $token = self::getAuth0Token();
 
         $client = new GuzzleHttp\Client();
@@ -388,15 +410,20 @@ class ApiController extends Controller
 
     private function setup($url = null)
     {
-        $redirect = $this->redirect_uri  .= '?redirect_to=' . $url;
+        $redirect = $this->redirect_uri .= '?redirect_to=' . $url;
 
-        $this->auth0 = new Auth0([
-            'domain' => $this->domain,
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
-            'redirect_uri' => $redirect,
-            'scope' => $this->scope,
-        ]);
+        try {
+            $this->auth0 = new Auth0([
+                'domain' => $this->domain,
+                'client_id' => $this->client_id,
+                'client_secret' => $this->client_secret,
+                'redirect_uri' => $redirect,
+                'scope' => $this->scope,
+            ]);
+        }
+        catch (CoreException $e) {
+            throw new \Error('Auth0 Core Exception' . $e);
+        }
     }
 
 }
