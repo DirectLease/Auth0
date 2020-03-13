@@ -2,6 +2,7 @@
 
 namespace DirectLease\Auth0\Extensions;
 
+use DirectLease\Auth0\ApiController;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Configurable;
@@ -18,7 +19,7 @@ class MemberExtension extends DataExtension
     use Configurable;
 
     private $auth0Id;
-    private $firstname;
+    private $auth0_firstname;
     private $middlename;
     private $lastname;
     private $email;
@@ -66,13 +67,13 @@ class MemberExtension extends DataExtension
 
     public function setAuth0Firstname($name)
     {
-        $this->firstname = $name;
+        $this->auth0_firstname = $name;
         $this->updateSession('firstname', $name);
     }
 
     public function getAuth0Firstname()
     {
-        return $this->owner->Firstname;
+        return $this->auth0_firstname;
     }
 
     public function setAuth0Middlename($name)
@@ -116,6 +117,12 @@ class MemberExtension extends DataExtension
             $middlename = ' ';
         }
         return $this->getAuth0Firstname() . $middlename . $this->getAuth0LastName();
+    }
+
+    public function sendAuth0VerificationMail()
+    {
+        $controller = new ApiController();
+        return $controller->sendVerificationMail();
     }
 
     private function getSession()
