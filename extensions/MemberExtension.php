@@ -51,7 +51,14 @@ class MemberExtension extends DataExtension
 
     public function getProperty($name)
     {
-        return $this->{$name};
+        if(isset($this->$name))
+        {
+            return $this->{$name};
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public function setAuth0Id($id)
