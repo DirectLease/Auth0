@@ -1,0 +1,3 @@
+nl:
+  DirectLease\Auth0\ApiController:
+    ProfileUpdated: Je profiel is bijgewerkt

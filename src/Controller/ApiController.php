@@ -189,7 +189,7 @@ class ApiController extends Controller
         $session = $request->getSession();
 
         $session->set('ActionStatus', 'success');
-        $session->set('ActionMessage', 'Your profile has been updated');
+        $session->set('ActionMessage', _t(__CLASS__.'.ProfileUpdated', 'Your profile has been updated'));
 
         $this->redirectBack();
     }
