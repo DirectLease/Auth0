@@ -4,15 +4,16 @@ namespace DirectLease\Auth0;
 
 use Auth0\SDK\API\Authentication;
 use Auth0\SDK\Auth0;
-use Auth0\SDK\Exception\CoreException;
 use GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
+
 
 /**
  * Class Auth0ApiController
@@ -28,6 +29,7 @@ class ApiController extends Controller
         'login',
         'logout',
         'callback',
+        'updateProfile',
         'updateUserMetadata',
         'sendVerificationMail',
         'checkAndCreateAuth0UserAccount',
@@ -70,7 +72,7 @@ class ApiController extends Controller
     {
         $redirect_to = $this->request->getVar('redirect_to');
 
-        // Logging in and out could lead to invalid states (due to browser cache)
+        // Due to browser logging in and out could lead to invalid states
         // So we are now making sure every login request is unique
         if (!$this->request->getVar('uid'))
         {
@@ -172,6 +174,26 @@ class ApiController extends Controller
         }
     }
 
+
+    public function updateProfile($input)
+    {
+        $current_user = $this->member;
+
+        $user['sub'] = $current_user->getAuth0Id();
+        $user['email'] = $current_user->getAuth0Email();
+        $user['user_metadata'] = $input->postVars();
+
+        self::updateUserData($user, true);
+
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+
+        $session->set('ActionStatus', 'success');
+        $session->set('ActionMessage', 'Your profile has been updated');
+
+        $this->redirectBack();
+    }
+
     /**
      * POST: Update user metadata on Auth0
      *
@@ -263,6 +285,7 @@ class ApiController extends Controller
         $current_user->setAuth0Middlename($middlename);
         $current_user->setAuth0Lastname($lastname);
         $current_user->setAuth0Email($mail);
+        $current_user->setAuth0Verified($verified);
 
         if ($user_metadata) {
             self::parseMetadata($user_metadata);
@@ -421,7 +444,7 @@ class ApiController extends Controller
                 'scope' => $this->scope,
             ]);
         }
-        catch (CoreException $e) {
+        catch (\Auth0\SDK\Exception\CoreException $e) {
             throw new \Error('Auth0 Core Exception' . $e);
         }
     }

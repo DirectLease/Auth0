@@ -19,10 +19,11 @@ class MemberExtension extends DataExtension
     use Configurable;
 
     private $auth0Id;
-    private $auth0_firstname;
-    private $middlename;
-    private $lastname;
-    private $email;
+    private $auth0Verified;
+    private $auth0Firstname;
+    private $auth0Middlename;
+    private $auth0Lastname;
+    private $auth0Email;
 
 
     public function __construct()
@@ -72,48 +73,59 @@ class MemberExtension extends DataExtension
         return $this->auth0Id;
     }
 
+    public function setAuth0Verified($state)
+    {
+        $this->auth0Verified = $state;
+        $this->updateSession('auth0Verified', $state);
+    }
+
+    public function getAuth0Verified()
+    {
+        return $this->auth0Verified;
+    }
+
     public function setAuth0Firstname($name)
     {
-        $this->auth0_firstname = $name;
-        $this->updateSession('firstname', $name);
+        $this->auth0Firstname = $name;
+        $this->updateSession('auth0Firstname', $name);
     }
 
     public function getAuth0Firstname()
     {
-        return $this->auth0_firstname;
+        return $this->auth0Firstname;
     }
 
     public function setAuth0Middlename($name)
     {
-        $this->middlename = $name;
-        $this->updateSession('middlename', $name);
+        $this->auth0Middlename = $name;
+        $this->updateSession('auth0Middlename', $name);
     }
 
     public function getAuth0Middlename()
     {
-        return $this->middlename;
+        return $this->auth0Middlename;
     }
 
     public function setAuth0Lastname($name)
     {
-        $this->lastname = $name;
-        $this->updateSession('lastname', $name);
+        $this->auth0Lastname = $name;
+        $this->updateSession('auth0Lastname', $name);
     }
 
     public function getAuth0Lastname()
     {
-        return $this->lastname;
+        return $this->auth0Lastname;
     }
 
     public function setAuth0Email($email)
     {
-        $this->email = $email;
-        $this->updateSession('email', $email);
+        $this->auth0Email = $email;
+        $this->updateSession('auth0Email', $email);
     }
 
     public function getAuth0Email()
     {
-        return $this->email;
+        return $this->auth0Email;
     }
 
     public function getAuth0FullName()
@@ -157,16 +169,19 @@ class MemberExtension extends DataExtension
                 case 'auth0Id':
                     $this->setAuth0Id($value);
                     break;
-                case 'firstname':
+                case 'auth0Verified':
+                    $this->setAuth0Verified($value);
+                    break;
+                case 'auth0Firstname':
                     $this->setAuth0Firstname($value);
                     break;
-                case 'middlename':
+                case 'auth0Middlename':
                     $this->setAuth0Middlename($value);
                     break;
-                case 'lastname':
+                case 'auth0Lastname':
                     $this->setAuth0Lastname($value);
                     break;
-                case 'email':
+                case 'auth0Email':
                     $this->setAuth0Email($value);
                     break;
                 default:

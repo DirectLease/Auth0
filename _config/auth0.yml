@@ -9,6 +9,7 @@ SilverStripe\Control\Director:
     'auth//logout': 'DirectLease\Auth0\ApiController'
     'auth//callback': 'DirectLease\Auth0\ApiController'
     'auth//checkAndCreateAuth0UserAccount': 'DirectLease\Auth0\ApiController'
+    'auth//updateProfile': 'DirectLease\Auth0\ApiController'
     'auth//updateUserMetadata': 'DirectLease\Auth0\ApiController'
     'auth//sendVerificationMail': 'DirectLease\Auth0\ApiController'
 ---
