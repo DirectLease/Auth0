@@ -239,7 +239,20 @@ class ApiController extends Controller
             'user_id' => $id,
         );
 
-        return $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
+        $result = $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
+
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+
+        if($result) {
+            $session->set('ActionStatus', 'success');
+            $session->set('ActionMessage', _t(__CLASS__.'.VerificationSend', 'The email has been send, please check your mail.'));
+        } else {
+            $session->set('ActionStatus', 'failed');
+            $session->set('ActionMessage', _t(__CLASS__.'.VerificationSendFailed', 'Something went wrong please try again later.'));
+        }
+
+        $this->redirectBack();
 
     }
 

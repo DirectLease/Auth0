@@ -138,12 +138,6 @@ class MemberExtension extends DataExtension
         return $this->getAuth0Firstname() . $middlename . $this->getAuth0LastName();
     }
 
-    public function sendAuth0VerificationMail()
-    {
-        $controller = new ApiController();
-        return $controller->sendVerificationMail();
-    }
-
     private function getSession()
     {
         $request = Injector::inst()->get(HTTPRequest::class);

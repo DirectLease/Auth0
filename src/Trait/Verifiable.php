@@ -7,16 +7,15 @@ use SilverStripe\Security\Security;
 trait Verifiable
 {
 
-    public function __construct()
+    public function isMemberVerified()
     {
-        parent::__construct();
-        
         $member = Security::getCurrentUser();
 
-        if($member && !$member->auth0Verified) {
-            $this->redirect('/verify-member');
-        } else if(!$member){
-            Security::permissionFailure();
+        if($member && !$member->auth0Verified)
+        {
+            // TODO: Make config setting for URL if empty return a false and else true
+            return $this->redirect('verificatie/');
         }
     }
+
 }

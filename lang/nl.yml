@@ -1,3 +1,5 @@
 nl:
   DirectLease\Auth0\ApiController:
     ProfileUpdated: Je profiel is bijgewerkt
+    VerificationSend: De verificatie e-mail is zojuist verzonden naar uw mailbox, controleer uw e-mail a.u.b.
+    VerificationSendFailed: Er ging iets mis bij het versturen van de verificatie e-mail, probeer het later nogmaals a.u.b.
