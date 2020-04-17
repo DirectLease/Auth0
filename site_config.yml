@@ -16,3 +16,6 @@ DirectLease\Auth0\ApiController:
 DirectLease\Auth0\Extensions\MemberExtension:
   properties:
     OptionalDefaultFields: 'Default Value'
+
+DirectLease\Auth0\Verifiable:
+  verification_uri: 'The url you want to redirect to if member is not verified yet'
