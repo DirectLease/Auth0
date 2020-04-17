@@ -59,7 +59,7 @@ The following config settings are **required**:
 * **client_id** - the client id of your auth0 application
 * **client_secret** - the client secret of your auth0 application
 * **domain** - the domain of your auth0 application
-* **redirect_uri** - the fully qualitied uri of your website appended with /auth/callback (https://www.mysite.com/auth/callback)
+* **redirect_uri** - Auth0 needs a fully qualified URL to your site. Default value is /auth/callback which will be turned into https://www.mysite.com/auth/callback
 * **scope** - the scope of attributes you want to retrieve from the user who logs in at Auth0.
 Default is 'openid email profile'
 

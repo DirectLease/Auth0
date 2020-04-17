@@ -60,7 +60,7 @@ class ApiController extends Controller
         $this->domain = $this->config()->get('domain');
         $this->client_id = $this->config()->get('client_id');
         $this->client_secret = $this->config()->get('client_secret');
-        $this->redirect_uri = $this->config()->get('redirect_uri');
+        $this->redirect_uri = Director::protocolAndHost() . $this->config()->get('redirect_uri');
         $this->scope = $this->config()->get('scope');
         $this->default_email = $this->config()->get('default_mailaddress');
         $this->namespace = $this->config()->get('namespace');
