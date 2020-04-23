@@ -72,6 +72,11 @@ class ApiController extends Controller
     {
         $redirect_to = $this->request->getVar('redirect_to');
 
+        if($this->request->getVar('BackURL'))
+        {
+            $redirect_to = $this->request->getVar('BackURL');
+        }
+
         // Due to browser logging in and out could lead to invalid states
         // So we are now making sure every login request is unique
         if (!$this->request->getVar('uid'))
