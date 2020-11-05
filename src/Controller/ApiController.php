@@ -46,6 +46,7 @@ class ApiController extends Controller
     private $default_email;
     private $namespace;
     private $url;
+    private $persistent_login;
 
     public function __construct()
     {
@@ -64,7 +65,8 @@ class ApiController extends Controller
         $this->scope = $this->config()->get('scope');
         $this->default_email = $this->config()->get('default_mailaddress');
         $this->namespace = $this->config()->get('namespace');
-        $this->url = 'https://' . $this->config()->get('domain');
+        $this->url = 'https://' . $this->domain;
+        $this->persistent_login = $this->config()->get('persisent_login');
 
     }
 
@@ -137,7 +139,7 @@ class ApiController extends Controller
         $existingUser = Member::get()->filterAny($filters)->first();
 
         if ($existingUser) {
-            $identityStore->logIn($existingUser);
+            $identityStore->logIn($existingUser, $this->persistent_login);
             $this->member = $existingUser;
         } else {
             $default_mailaddress = $this->getDefaultMailaddress();
@@ -146,7 +148,7 @@ class ApiController extends Controller
             $member = Member::get()->filterAny($filters)->first();
 
             if($member) {
-                $identityStore->logIn($member);
+                $identityStore->logIn($member, $this->persistent_login);
                 $this->member = $member;
             } else {
                 throw new \Error("No member was found with the default emailaddress: $default_mailaddress");
