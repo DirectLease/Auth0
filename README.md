@@ -62,10 +62,12 @@ The following config settings are **required**:
 * **redirect_uri** - Auth0 needs a fully qualified URL to your site. Default value is /auth/callback which will be turned into https://www.mysite.com/auth/callback
 * **scope** - the scope of attributes you want to retrieve from the user who logs in at Auth0.
 Default is 'openid email profile'
+* **persisent_login** - Do you want the use the persistent login of SilverStripe, true or false.
+
 
 The following config settings are **optional** based on your implementation:
 
-* **m2m_client_id** - the client id of your machine to machine (M2M) auth0 application
+* **m2m_client_id** - the client id of your machine to machine (M2M) auth0 application (you can choose to create a seperate M2M application and connect that with the management API. If do want to use the management API and want to use the web application you created to connect with it, then use the same client_id and client_secret here as your web application)
 * **m2m_client_secret** - the client secret of your machine to machine (M2M) auth0 application
 * **namespace** - the namespace used in your auth0 rules 
 * **default_mailaddress** - the e-mail address of a the 'default' user (see implementation for info)
