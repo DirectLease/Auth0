@@ -188,6 +188,7 @@ class ApiController extends Controller
 
         $user['sub'] = $current_user->getAuth0Id();
         $user['email'] = $current_user->getAuth0Email();
+        $user['email_verified'] = $current_user->getAuth0Verified();
         $user['user_metadata'] = $input->postVars();
 
         self::updateUserData($user, true);
