@@ -70,8 +70,13 @@ class ApiController extends Controller
 
     }
 
-    public function login()
+    public function signup() {
+        $this->login(true);
+    }
+
+    public function login($isSignup=false)
     {
+        // handle redirect back correctly
         $redirect_to = $this->request->getVar('redirect_to');
 
         if($this->request->getVar('BackURL'))
@@ -79,16 +84,26 @@ class ApiController extends Controller
             $redirect_to = $this->request->getVar('BackURL');
         }
 
+        $extraAuth0Params = array();
+        $action="login";
+
+        // Show register tab instead of login tab
+        if ($isSignup === true) {
+            $action='signup';
+            // set config param for the lock so it opens up in signup tab
+            $extraAuth0Params = array('auth_action'=>'signup');
+        }
+
         // Due to browser logging in and out could lead to invalid states
         // So we are now making sure every login request is unique
         if (!$this->request->getVar('uid'))
         {
-            return $this->redirect('/auth/login?redirect_to=' . $redirect_to . '&uid=' . uniqid());
+            return $this->redirect('/auth/'.$action.'?redirect_to=' . $redirect_to . '&uid=' . uniqid());
         }
 
         $this->setup($redirect_to);
 
-        $this->auth0->login();
+        $this->auth0->login('','',$extraAuth0Params);
     }
 
     public function logout()
