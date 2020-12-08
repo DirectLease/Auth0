@@ -27,6 +27,7 @@ class ApiController extends Controller
     /** @var array $allowed_actions */
     private static $allowed_actions = array(
         'login',
+        'signup',
         'logout',
         'callback',
         'updateProfile',
