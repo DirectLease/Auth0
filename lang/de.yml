@@ -1,0 +1,5 @@
+de:
+  DirectLease\Auth0\ApiController:
+    ProfileUpdated: Ihr Profil wurde aktualisiert
+    VerificationSend: Die Bestätigungs-E-Mail wurde gerade an Ihre Mailbox gesendet. Bitte überprüfen Sie Ihre E-Mails.
+    VerificationSendFailed: Beim Senden der Bestätigungs-E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.

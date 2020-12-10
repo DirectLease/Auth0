@@ -1,0 +1,5 @@
+fr:
+  DirectLease\Auth0\ApiController:
+    ProfileUpdated: Votre profil a été mis a jour
+    VerificationSend: L'e-mail de vérification a été envoyé à votre boîte aux lettres, veuillez vérifier votre e-mail.
+    VerificationSendFailed: Une erreur s'est produite lors de la tentative de renvoi de votre e-mail de vérification. Veuillez réessayer plus tard.

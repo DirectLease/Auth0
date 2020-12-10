@@ -1,5 +1,5 @@
 en:
   DirectLease\Auth0\ApiController:
     ProfileUpdated: Your profile has been updated
-    VerificationSend: The verification e-mail has been send to your mailbox, please check your e-mail.
+    VerificationSend: The verification e-mail has been sent to your mailbox, please check your e-mail.
     VerificationSendFailed: Something went wrong while we tried to resend your verification email, please try again later.
