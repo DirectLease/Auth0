@@ -63,7 +63,6 @@ The following config settings are **required**:
 * **scope** - the scope of attributes you want to retrieve from the user who logs in at Auth0.
 Default is 'openid email profile'
 * **persisent_login** - Do you want the use the persistent login of SilverStripe, true or false.
-* **multi_locale** - Boolean if you use Fluent and want to send the language to auth0.
 
 The following config settings are **optional** based on your implementation:
 
@@ -71,6 +70,7 @@ The following config settings are **optional** based on your implementation:
 * **m2m_client_secret** - the client secret of your machine to machine (M2M) auth0 application
 * **namespace** - the namespace used in your auth0 rules 
 * **default_mailaddress** - the e-mail address of a the 'default' user (see implementation for info)
+* **multi_locale** - Boolean if you use Fluent and want to send the locale to auth0 as an extraParams.
 
 ## Minimal setup steps for login
 We only cover what is needed to get the module to work, Auth0 allows you to configure so much more.
