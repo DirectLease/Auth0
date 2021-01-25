@@ -63,7 +63,7 @@ The following config settings are **required**:
 * **scope** - the scope of attributes you want to retrieve from the user who logs in at Auth0.
 Default is 'openid email profile'
 * **persisent_login** - Do you want the use the persistent login of SilverStripe, true or false.
-
+* **multi_locale** - Boolean if you use Fluent and want to send the language to auth0.
 
 The following config settings are **optional** based on your implementation:
 

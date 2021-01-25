@@ -92,7 +92,16 @@ class ApiController extends Controller
         if ($isSignup === true) {
             $action='signup';
             // set config param for the lock so it opens up in signup tab
-            $extraAuth0Params = array('auth_action'=>'signup');
+            if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
+                $extraAuth0Params = array(
+                    'auth_action'=>'signup',
+                    'language'=> explode("-", TractorCow\Fluent\Model\Locale::getCurrentLocale()->getHrefLang())[0]
+                );
+            } else {
+                $extraAuth0Params = array(
+                    'auth_action' => 'signup'
+                );
+            }
         }
 
         // Due to browser logging in and out could lead to invalid states
