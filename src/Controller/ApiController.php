@@ -95,7 +95,7 @@ class ApiController extends Controller
             if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
                 $extraAuth0Params = array(
                     'auth_action' => 'signup',
-                    'language' => Locale::getCurrentLocale()->Locale
+                    'locale' => Locale::getCurrentLocale()->Locale
                 );
             } else {
                 $extraAuth0Params = array(
