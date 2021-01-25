@@ -13,7 +13,7 @@ DirectLease\Auth0\ApiController:
   default_mailaddress: 'The emailaddress you want to use for your default SilverStripe user'
   namespace: 'The namespace you use in your auth0 application rules'
   persisent_login: 'Do you want to use the persistant login from SilverStripe? needs to be true or false (boolean)'
-  multi_locale: "Boolean if you use Fluent and want to send the language to auth0 "
+  multi_locale: false
 
 DirectLease\Auth0\Extensions\MemberExtension:
   properties:
