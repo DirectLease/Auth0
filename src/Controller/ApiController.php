@@ -94,8 +94,8 @@ class ApiController extends Controller
             // set config param for the lock so it opens up in signup tab
             if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
                 $extraAuth0Params = array(
-                    'auth_action'=>'signup',
-                    'language'=> explode("_", Locale::getCurrentLocale()->Locale)[0]
+                    'auth_action' => 'signup',
+                    'language' => Locale::getCurrentLocale()->Locale
                 );
             } else {
                 $extraAuth0Params = array(
