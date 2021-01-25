@@ -13,7 +13,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
+use TractorCow\Fluent\Model\Locale;
 
 /**
  * Class Auth0ApiController
@@ -95,7 +95,7 @@ class ApiController extends Controller
             if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
                 $extraAuth0Params = array(
                     'auth_action'=>'signup',
-                    'language'=> explode("_", TractorCow\Fluent\Model\Locale::getCurrentLocale()->Locale)[0]
+                    'language'=> explode("_", Locale::getCurrentLocale()->Locale)[0]
                 );
             } else {
                 $extraAuth0Params = array(

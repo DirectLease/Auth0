@@ -19,7 +19,8 @@
 		"silverstripe/vendor-plugin": "^1.0",
 		"auth0/auth0-php": "^5.7",
 		"guzzlehttp/guzzle": "^6.5",
-		"ext-json": "*"
+		"ext-json": "*",
+		"tractorcow/silverstripe-fluent": "^5"
 	},
 	"extra": {
 		"installer-name": "auth0",
