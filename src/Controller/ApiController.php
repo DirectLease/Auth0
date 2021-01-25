@@ -95,7 +95,7 @@ class ApiController extends Controller
             if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
                 $extraAuth0Params = array(
                     'auth_action'=>'signup',
-                    'language'=> explode("-", TractorCow\Fluent\Model\Locale::getCurrentLocale()->getHrefLang())[0]
+                    'language'=> explode("_", TractorCow\Fluent\Model\Locale::getCurrentLocale()->Locale)[0]
                 );
             } else {
                 $extraAuth0Params = array(
