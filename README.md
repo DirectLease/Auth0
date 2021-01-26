@@ -64,13 +64,13 @@ The following config settings are **required**:
 Default is 'openid email profile'
 * **persisent_login** - Do you want the use the persistent login of SilverStripe, true or false.
 
-
 The following config settings are **optional** based on your implementation:
 
 * **m2m_client_id** - the client id of your machine to machine (M2M) auth0 application (you can choose to create a seperate M2M application and connect that with the management API. If do want to use the management API and want to use the web application you created to connect with it, then use the same client_id and client_secret here as your web application)
 * **m2m_client_secret** - the client secret of your machine to machine (M2M) auth0 application
 * **namespace** - the namespace used in your auth0 rules 
 * **default_mailaddress** - the e-mail address of a the 'default' user (see implementation for info)
+* **multi_locale** - Boolean if you use Fluent and want to send the locale to auth0 as an extraParams.
 
 ## Minimal setup steps for login
 We only cover what is needed to get the module to work, Auth0 allows you to configure so much more.
