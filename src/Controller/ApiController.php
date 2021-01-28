@@ -75,10 +75,11 @@ class ApiController extends Controller
         $this->login(true);
     }
 
-    public function login($isSignup=false)
+    public function login($isSignup = false)
     {
         // handle redirect back correctly
         $redirect_to = $this->request->getVar('redirect_to');
+        $email = $this->request->getVar('email');
 
         if($this->request->getVar('BackURL'))
         {
@@ -104,11 +105,15 @@ class ApiController extends Controller
             }
         }
 
+        if ($email) {
+            $extraAuth0Params['login_hint'] = $email;
+        }
+
         // Due to browser logging in and out could lead to invalid states
         // So we are now making sure every login request is unique
         if (!$this->request->getVar('uid'))
         {
-            return $this->redirect('/auth/'.$action.'?redirect_to=' . $redirect_to . '&uid=' . uniqid());
+            return $this->redirect('/auth/'.$action.'?redirect_to=' . $redirect_to . '&uid=' . uniqid() . '&email=' . $email);
         }
 
         $this->setup($redirect_to);
