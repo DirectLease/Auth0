@@ -13,6 +13,7 @@ SilverStripe\Control\Director:
     'auth//updateProfile': 'DirectLease\Auth0\ApiController'
     'auth//updateUserMetadata': 'DirectLease\Auth0\ApiController'
     'auth//sendVerificationMail': 'DirectLease\Auth0\ApiController'
+    'auth//getIdByEmail': 'DirectLease\Auth0\ApiController'
 ---
 Name: auth0
 After:

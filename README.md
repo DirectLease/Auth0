@@ -44,6 +44,7 @@ The following routes can be used with this module
 * /auth/updateUserMetadata - You can update the user metadata at Auth0 (does require a M2M Auth0 application)
 * /auth/checkAndCreateAuth0UserAccount - If you want to check if someone already has an Auth0 account and if not create one (does require a M2M Auth0 application)
 * /auth/sendVerificationMail - The currently logged-in user will receive an e-mail from Auth0 to verify his account at Auth0 (does require a M2M Auth0 application)
+* /auth/getIdByEmail - Post an emailaddress to this route and you get back the users auth0 id if user exists else null
 
 ## Installation  
 composer require directlease/auth0

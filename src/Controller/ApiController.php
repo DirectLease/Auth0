@@ -34,6 +34,7 @@ class ApiController extends Controller
         'updateUserMetadata',
         'sendVerificationMail',
         'checkAndCreateAuth0UserAccount',
+        'getIdByEmail'
     );
 
 
@@ -188,6 +189,21 @@ class ApiController extends Controller
         self::updateUserData($user, false);
 
         $this->redirect($redirect_to);
+    }
+
+    public function getIdByEmail()
+    {
+        $email = $this->request->postVar('email');
+        $email_string = ':"' . $email . '"';
+        $query_string = 'email' . urlencode($email_string) . '&search_engine=v3';
+
+        $response = $this->call_auth0("/api/v2/users?q=" . $query_string, "GET");
+
+        if (!empty($response)) {
+            return $response[0]->user_id;
+        } else {
+            return null;
+        }
     }
 
     /**
