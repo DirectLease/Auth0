@@ -194,8 +194,8 @@ class ApiController extends Controller
     public function getIdByEmail()
     {
         $email = $this->request->postVar('email');
-        $email_string = ':"' . $email . '"';
-        $query_string = 'email' . urlencode($email_string) . '&search_engine=v3';
+        $email_string = ':"' . urlencode($email) . '"';
+        $query_string = 'email' .$email_string . '&search_engine=v3';
 
         $response = $this->call_auth0("/api/v2/users?q=" . $query_string, "GET");
 
