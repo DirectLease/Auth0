@@ -515,5 +515,39 @@ class ApiController extends Controller
             throw new \Error('Auth0 Core Exception' . $e);
         }
     }
+    
+       /**
+     * For given email sent change password request mail
+     *
+     * @param string $email
+     * @return bool true if request succeeded
+     * @throws GuzzleHttp\Exception\GuzzleException
+     */
+    public function requestChangePassword(string $email) {
+        $this->setup();
+        $token = self::getAuth0Token();
+        $client = new GuzzleHttp\Client();
+        
+        $headers = [
+            'Authorization' => 'Bearer ' . $token->access_token,
+            'Accept'        => 'application/json',
+        ];
+
+        $fields = [
+            'client_id' => $this->client_id,
+            'email' => $email,
+            'connection' => 'Username-Password-Authentication'
+        ];
+        
+        try {
+            $result = $client->request('POST', $this->url . "/dbconnections/change_password", [
+                'headers'       => $headers,
+                'json'          => $fields
+            ]);
+            return true;
+        } catch (ClientException $e) {
+            return false;
+        }
+    }
 
 }
