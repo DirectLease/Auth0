@@ -33,8 +33,7 @@ class ApiController extends Controller
         'updateProfile',
         'updateUserMetadata',
         'sendVerificationMail',
-        'checkAndCreateAuth0UserAccount',
-        'getIdByEmail'
+        'checkAndCreateAuth0UserAccount'
     );
 
 
@@ -202,7 +201,7 @@ class ApiController extends Controller
         if (!empty($response)) {
             return $response[0]->user_id;
         } else {
-            return null;
+            return false;
         }
     }
 
@@ -227,6 +226,7 @@ class ApiController extends Controller
         }
     }
 
+
     public function updateProfile($input)
     {
         $current_user = $this->member;
@@ -238,9 +238,13 @@ class ApiController extends Controller
 
         self::updateUserData($user, true);
 
-        $this->getResponse()->setStatusCode(202);
-        return $this->getResponse();
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
 
+        $session->set('ActionStatus', 'success');
+        $session->set('ActionMessage', _t(__CLASS__.'.ProfileUpdated', 'Your profile has been updated'));
+
+        $this->redirectBack();
     }
 
     /**
@@ -290,47 +294,19 @@ class ApiController extends Controller
 
         $result = $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
 
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+
         if($result) {
-            $this->getResponse()->setStatusCode(202);
-            return $this->getResponse();
+            $session->set('ActionStatus', 'success');
+            $session->set('ActionMessage', _t(__CLASS__.'.VerificationSend', 'The email has been send, please check your mail.'));
         } else {
-            $this->getResponse()->setStatusCode(500);
-            return $this->getResponse();
+            $session->set('ActionStatus', 'failed');
+            $session->set('ActionMessage', _t(__CLASS__.'.VerificationSendFailed', 'Something went wrong please try again later.'));
         }
-    }
 
-    /**
-     * For given email sent change password request mail
-     *
-     * @param string $email
-     * @return bool true if request succeeded
-     * @throws GuzzleHttp\Exception\GuzzleException
-     */
-    public function requestChangePassword(string $email) {
-        $this->setup();
-        $token = self::getAuth0Token();
-        $client = new GuzzleHttp\Client();
+        $this->redirectBack();
 
-        $headers = [
-            'Authorization' => 'Bearer ' . $token->access_token,
-            'Accept'        => 'application/json',
-        ];
-
-        $fields = [
-            'client_id' => $this->client_id,
-            'email' => $email,
-            'connection' => 'Username-Password-Authentication'
-        ];
-
-        try {
-            $result = $client->request('POST', $this->url . "/dbconnections/change_password", [
-                'headers'       => $headers,
-                'json'          => $fields
-            ]);
-            return true;
-        } catch (ClientException $e) {
-            return false;
-        }
     }
 
     /**
@@ -535,7 +511,7 @@ class ApiController extends Controller
             ]);
         }
         catch (\Auth0\SDK\Exception\CoreException $e) {
-            throw new \Error('Auth0 Core Exception: ' . $e);
+            throw new \Error('Auth0 Core Exception' . $e);
         }
     }
 
