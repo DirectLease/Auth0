@@ -33,8 +33,7 @@ class ApiController extends Controller
         'updateProfile',
         'updateUserMetadata',
         'sendVerificationMail',
-        'checkAndCreateAuth0UserAccount',
-        'getIdByEmail'
+        'checkAndCreateAuth0UserAccount'
     );
 
 
@@ -191,7 +190,8 @@ class ApiController extends Controller
         $this->redirect($redirect_to);
     }
 
-    public function getIdByEmail()
+    
+    protected function getIdByEmail()
     {
         $email = $this->request->postVar('email');
         $email_string = ':"' . urlencode($email) . '"';
