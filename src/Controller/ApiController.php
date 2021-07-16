@@ -191,9 +191,15 @@ class ApiController extends Controller
     }
 
     
-    protected function getIdByEmail()
+   /**
+    * A function that for given email returns the auth0id can be used when initing this controller and than call this function
+    * This function is not exposed externally 
+    * 
+    * @param string email email
+    * @return mixed
+    */
+    protected function getIdByEmail(string $email)
     {
-        $email = $this->request->postVar('email');
         $email_string = ':"' . urlencode($email) . '"';
         $query_string = 'email' .$email_string . '&search_engine=v3';
 
@@ -202,7 +208,7 @@ class ApiController extends Controller
         if (!empty($response)) {
             return $response[0]->user_id;
         } else {
-            return null;
+            return false;
         }
     }
 
