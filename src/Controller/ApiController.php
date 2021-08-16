@@ -198,7 +198,7 @@ class ApiController extends Controller
     * @param string email email
     * @return mixed
     */
-    protected function getIdByEmail(string $email)
+    public function getIdByEmail(string $email)
     {
         $email_string = ':"' . urlencode($email) . '"';
         $query_string = 'email' .$email_string . '&search_engine=v3';
