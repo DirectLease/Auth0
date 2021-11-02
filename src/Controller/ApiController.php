@@ -67,7 +67,7 @@ class ApiController extends Controller
         $this->default_email = $this->config()->get('default_mailaddress');
         $this->namespace = $this->config()->get('namespace');
         $this->url = 'https://' . $this->domain;
-        $this->persistent_login = $this->config()->get('persisent_login');
+        $this->persistent_login = $this->config()->get('persistent_login');
 
     }
 
