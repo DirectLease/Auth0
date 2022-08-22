@@ -18,7 +18,7 @@
 		"silverstripe/versioned": "^1.0",
 		"silverstripe/vendor-plugin": "^1.0",
 		"auth0/auth0-php": "^5.7",
-		"guzzlehttp/guzzle": "^6.5",
+		"guzzlehttp/guzzle": "^7",
 		"ext-json": "*",
 		"tractorcow/silverstripe-fluent": "^6"
 	},
