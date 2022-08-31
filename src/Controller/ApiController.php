@@ -129,13 +129,15 @@ class ApiController extends Controller
         $identityStore = Injector::inst()->get(IdentityStore::class);
         $identityStore->logOut($this->request);
 
-        $auth_api = new Authentication(['domain'=>$this->domain, 'clientId'=>$this->client_id]);
+        //$auth_api = new Authentication(['domain'=>$this->domain, 'clientId'=>$this->client_id]);
 
         $this->setup();
+        $auth_api = $this->auth0->authentication();
 
         $this->auth0->logout();
-
-        $this->redirect($auth_api->get_logout_link(Director::absoluteBaseURL(), $this->client_id));
+        //$this->redirect('/');
+        $this->redirect($auth_api->getLogoutLink(Director::absoluteBaseURL()));
+        //$this->redirect($auth_api->get_logout_link(Director::absoluteBaseURL(), $this->client_id));
     }
 
 
