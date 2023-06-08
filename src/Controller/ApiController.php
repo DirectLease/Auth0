@@ -18,7 +18,7 @@ use TractorCow\Fluent\Model\Locale;
 /**
  * Class Auth0ApiController
  *
- * @author  Arno Bor
+ * @author  Arno Bor, Lars Prakken
  * @package auth0
  */
 class ApiController extends Controller
@@ -48,6 +48,7 @@ class ApiController extends Controller
     private $namespace;
     private $url;
     private $persistent_login;
+    private $cookie_secret;
 
     public function __construct()
     {
@@ -68,7 +69,7 @@ class ApiController extends Controller
         $this->namespace = $this->config()->get('namespace');
         $this->url = 'https://' . $this->domain;
         $this->persistent_login = $this->config()->get('persistent_login');
-
+        $this->cookie_secret = $this->config()->get('cookie_secret');
     }
 
     public function signup() {
@@ -118,7 +119,9 @@ class ApiController extends Controller
 
         $this->setup($redirect_to);
 
-        $this->auth0->login('','',$extraAuth0Params);
+        $redirect = $this->redirect_uri .= '?redirect_to=' . $redirect_to;
+
+        return $this->redirect($this->auth0->login($redirect,$extraAuth0Params));
     }
 
     public function logout()
@@ -126,14 +129,18 @@ class ApiController extends Controller
         $identityStore = Injector::inst()->get(IdentityStore::class);
         $identityStore->logOut($this->request);
 
-        $auth_api = new Authentication($this->domain, $this->client_id);
+        //$auth_api = new Authentication(['domain'=>$this->domain, 'clientId'=>$this->client_id]);
 
         $this->setup();
+        $auth_api = $this->auth0->authentication();
 
         $this->auth0->logout();
-
-        $this->redirect($auth_api->get_logout_link(Director::absoluteBaseURL(), $this->client_id));
+        //$this->redirect('/');
+        $this->redirect($auth_api->getLogoutLink(Director::absoluteBaseURL()));
+        //$this->redirect($auth_api->get_logout_link(Director::absoluteBaseURL(), $this->client_id));
     }
+
+
 
     /**
      * Get the authenticated user and login in SS
@@ -145,15 +152,39 @@ class ApiController extends Controller
     public function callback()
     {
         $this->setup();
+
         $redirect_to = $this->request->getVar('redirect_to');
-        $user = $this->auth0->getUser();
+
+        if ($this->auth0->getExchangeParameters()) {
+            // Have the SDK complete the authentication flow:
+            $this->auth0->exchange();
+        }
+
+
+
+        //$user = $this->auth0->getUser();
+        $user = $this->auth0->getCredentials();
+
+        if ($user === null) {
+            // The user isn't logged in.
+            echo 'not logged in';
+            return;
+        }
+
+        $user = (array)$user->user;
+
+        /*echo "<pre/>";
+        print_r($user);
+        die();*/
         // the namespace is set in the Auth0 rule for
         // adding app_metadata and user_metadata to the response
         $namespace = $this->namespace;
 
         if (!$user) {
+            die ('no user');
             return false;
         }
+
         if (isset($user[$namespace . "user_metadata"])) {
             $user["user_metadata"] = $user[$namespace . "user_metadata"];
             unset($user[$namespace . "user_metadata"]);
@@ -184,20 +215,24 @@ class ApiController extends Controller
                 throw new \Error("No member was found with the default emailaddress: $default_mailaddress");
             }
         }
+        /* echo "<pre/>";
+         print_r($user);
+         die();*/
 
         self::updateUserData($user, false);
+
 
         $this->redirect($redirect_to);
     }
 
-    
-   /**
-    * A function that for given email returns the auth0id can be used when initing this controller and than call this function
-    * This function is not exposed externally 
-    * 
-    * @param string email email
-    * @return mixed
-    */
+
+    /**
+     * A function that for given email returns the auth0id can be used when initing this controller and than call this function
+     * This function is not exposed externally
+     *
+     * @param string email email
+     * @return mixed
+     */
     public function getIdByEmail(string $email)
     {
         $email_string = ':"' . urlencode($email) . '"';
@@ -534,10 +569,11 @@ class ApiController extends Controller
         try {
             $this->auth0 = new Auth0([
                 'domain' => $this->domain,
-                'client_id' => $this->client_id,
-                'client_secret' => $this->client_secret,
-                'redirect_uri' => $redirect,
+                'clientId' => $this->client_id,
+                'clientSecret' => $this->client_secret,
+                'redirectUri' => $redirect,
                 'scope' => $this->scope,
+                'cookieSecret' => $this->cookie_secret
             ]);
         }
         catch (\Auth0\SDK\Exception\CoreException $e) {

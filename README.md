@@ -61,8 +61,9 @@ The following config settings are **required**:
 * **client_secret** - the client secret of your auth0 application
 * **domain** - the domain of your auth0 application
 * **redirect_uri** - Auth0 needs a fully qualified URL to your site. Default value is /auth/callback which will be turned into https://www.mysite.com/auth/callback
-* **scope** - the scope of attributes you want to retrieve from the user who logs in at Auth0.
-Default is 'openid email profile'
+* **cookie_secret** -  A long secret value auth0 uses to encrypt session cookies, refer to Auth0 docs for explanation 
+* **scope** - the scope of attributes you want to retrieve from the user who logs in at Auth0. NOTICE: This is now an array instead of a string.
+Default is - 'openid' - 'email' - 'profile'
 * **persisent_login** - Do you want the use the persistent login of SilverStripe, true or false.
 
 The following config settings are **optional** based on your implementation:
