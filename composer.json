@@ -7,8 +7,13 @@
 	"authors": [
 		{
 			"name": "Arno Bor",
-			"email": "arno@directlease.nl"
-		}
+			"email": "xxxxxx@xxxxxxx.xxxxx"
+		},
+		{
+			"name": "Lars Prakken",
+			"email": "lars.prakken@directlease.nl"
+		},
+		
 	],
 	"support": {
 		"issues": "https://github.com/DirectLease/Auth0/issues"
@@ -20,7 +25,7 @@
 		"auth0/auth0-php": "^8",
 		"guzzlehttp/guzzle": "^7",
 		"ext-json": "*",
-		"tractorcow/silverstripe-fluent": "^6"
+		"tractorcow/silverstripe-fluent": "^5"
 	},
 	"extra": {
 		"installer-name": "auth0",
