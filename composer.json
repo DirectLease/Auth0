@@ -12,8 +12,7 @@
 		{
 			"name": "Lars Prakken",
 			"email": "lars.prakken@directlease.nl"
-		},
-		
+		}
 	],
 	"support": {
 		"issues": "https://github.com/DirectLease/Auth0/issues"
