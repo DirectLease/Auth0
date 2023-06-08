@@ -24,7 +24,7 @@
 		"auth0/auth0-php": "^8",
 		"guzzlehttp/guzzle": "^7",
 		"ext-json": "*",
-		"tractorcow/silverstripe-fluent": "^5"
+		"tractorcow/silverstripe-fluent": "^5|^6"
 	},
 	"extra": {
 		"installer-name": "auth0",
