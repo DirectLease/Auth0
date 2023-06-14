@@ -18,13 +18,13 @@
 		"issues": "https://github.com/DirectLease/Auth0/issues"
 	},
 	"require": {
-		"silverstripe/framework": "4.*",
-		"silverstripe/versioned": "^1.0",
-		"silverstripe/vendor-plugin": "^1.0",
+		"silverstripe/framework": "^4 || ^5",
+		"silverstripe/versioned": "^1 || ^2",
+		"silverstripe/vendor-plugin": "^1 || ^2",
 		"auth0/auth0-php": "^8",
 		"guzzlehttp/guzzle": "^7",
 		"ext-json": "*",
-		"tractorcow/silverstripe-fluent": "^5|^6"
+		"tractorcow/silverstripe-fluent": "^5||^6||^7"
 	},
 	"extra": {
 		"installer-name": "auth0",
