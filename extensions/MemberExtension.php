@@ -14,6 +14,7 @@ use SilverStripe\ORM\DataExtension;
  * @author  Arno Bor
  * @package auth0
  */
+#[\AllowDynamicProperties]
 class MemberExtension extends DataExtension
 {
     use Configurable;
