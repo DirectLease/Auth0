@@ -18,7 +18,7 @@ use TractorCow\Fluent\Model\Locale;
 /**
  * Class Auth0ApiController
  *
- * @author  Arno Bor, Lars Prakken
+ * @author  Arno Bor, Lars Prakken(lars@lemon8.nl)
  * @package auth0
  */
 class ApiController extends Controller
@@ -40,6 +40,7 @@ class ApiController extends Controller
     private $member;
     private $auth0;
     private $domain;
+    private $api_domain;
     private $client_id;
     private $client_secret;
     private $redirect_uri;
@@ -47,6 +48,7 @@ class ApiController extends Controller
     private $default_email;
     private $namespace;
     private $url;
+    private $api_url;
     private $persistent_login;
     private $cookie_secret;
 
@@ -61,6 +63,7 @@ class ApiController extends Controller
         }
 
         $this->domain = $this->config()->get('domain');
+        $this->api_domain = $this->config()->get('api_domain');
         $this->client_id = $this->config()->get('client_id');
         $this->client_secret = $this->config()->get('client_secret');
         $this->redirect_uri = Director::protocolAndHost() . $this->config()->get('redirect_uri');
@@ -68,6 +71,7 @@ class ApiController extends Controller
         $this->default_email = $this->config()->get('default_mailaddress');
         $this->namespace = $this->config()->get('namespace');
         $this->url = 'https://' . $this->domain;
+        $this->api_url = 'https://' . $this->api_domain;      
         $this->persistent_login = $this->config()->get('persistent_login');
         $this->cookie_secret = $this->config()->get('cookie_secret');
     }
@@ -554,7 +558,7 @@ class ApiController extends Controller
             'Accept'        => 'application/json',
         ];
 
-        $result = $client->request($type, $this->url . $uri, [
+        $result = $client->request($type, $this->api_url . $uri, [
             'headers'       => $headers,
             'json'          => $fields
         ]);
