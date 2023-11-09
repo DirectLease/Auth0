@@ -495,11 +495,17 @@ class ApiController extends Controller
      */
     private function getAuth0Token()
     {
+        // if a custom config param exists for m2m "audience", then use that one
+        $audience = $this->domain . '/api/v2/';
+        if ($this->config()->get('m2m_audience') != '') {
+            $audience=$this->config()->get('m2m_audience');
+        }     
+       
         // TODO: sanity check for m2m config settings
         $fields = array(
             'client_id' => $this->config()->get('m2m_client_id'),
             'client_secret' => $this->config()->get('m2m_client_secret'),
-            'audience' => $this->domain . '/api/v2/',
+            'audience' => $audience',
             'grant_type' => 'client_credentials'
         );
 
