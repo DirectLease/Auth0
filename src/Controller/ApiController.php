@@ -40,7 +40,6 @@ class ApiController extends Controller
     private $member;
     private $auth0;
     private $domain;
-    private $api_domain;
     private $client_id;
     private $client_secret;
     private $redirect_uri;
@@ -48,7 +47,6 @@ class ApiController extends Controller
     private $default_email;
     private $namespace;
     private $url;
-    private $api_url;
     private $persistent_login;
     private $cookie_secret;
 
@@ -62,8 +60,7 @@ class ApiController extends Controller
             $this->member = $user;
         }
 
-        $this->domain = $this->config()->get('domain');
-        $this->api_domain = $this->config()->get('api_domain');
+        $this->domain = $this->config()->get('domain');     
         $this->client_id = $this->config()->get('client_id');
         $this->client_secret = $this->config()->get('client_secret');
         $this->redirect_uri = Director::protocolAndHost() . $this->config()->get('redirect_uri');
@@ -71,7 +68,6 @@ class ApiController extends Controller
         $this->default_email = $this->config()->get('default_mailaddress');
         $this->namespace = $this->config()->get('namespace');
         $this->url = 'https://' . $this->domain;
-        $this->api_url = 'https://' . $this->api_domain;      
         $this->persistent_login = $this->config()->get('persistent_login');
         $this->cookie_secret = $this->config()->get('cookie_secret');
     }
@@ -503,7 +499,7 @@ class ApiController extends Controller
         $fields = array(
             'client_id' => $this->config()->get('m2m_client_id'),
             'client_secret' => $this->config()->get('m2m_client_secret'),
-            'audience' => $this->url . '/api/v2/',
+            'audience' => $this->domain . '/api/v2/',
             'grant_type' => 'client_credentials'
         );
 
