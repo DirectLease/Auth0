@@ -554,7 +554,7 @@ class ApiController extends Controller
             'Accept'        => 'application/json',
         ];
 
-        $result = $client->request($type, $this->api_url . $uri, [
+        $result = $client->request($type, $this->url . $uri, [
             'headers'       => $headers,
             'json'          => $fields
         ]);
