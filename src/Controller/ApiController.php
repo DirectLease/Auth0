@@ -496,7 +496,7 @@ class ApiController extends Controller
     private function getAuth0Token()
     {
         // if a custom config param exists for m2m "audience", then use that one
-        $audience = $this->domain . '/api/v2/';
+        $audience = $this->url . '/api/v2/';
         if ($this->config()->get('m2m_audience') != '') {
             $audience=$this->config()->get('m2m_audience');
         }     
