@@ -505,7 +505,7 @@ class ApiController extends Controller
         $fields = array(
             'client_id' => $this->config()->get('m2m_client_id'),
             'client_secret' => $this->config()->get('m2m_client_secret'),
-            'audience' => $audience',
+            'audience' => $audience,
             'grant_type' => 'client_credentials'
         );
 
