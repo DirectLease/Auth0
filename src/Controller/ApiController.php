@@ -25,7 +25,7 @@ class ApiController extends Controller
 {
 
     /** @var array $allowed_actions */
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'login',
         'signup',
         'logout',
@@ -34,7 +34,7 @@ class ApiController extends Controller
         'updateUserMetadata',
         'sendVerificationMail',
         'checkAndCreateAuth0UserAccount'
-    );
+    ];
 
 
     private $member;
@@ -60,7 +60,7 @@ class ApiController extends Controller
             $this->member = $user;
         }
 
-        $this->domain = $this->config()->get('domain');     
+        $this->domain = $this->config()->get('domain');
         $this->client_id = $this->config()->get('client_id');
         $this->client_secret = $this->config()->get('client_secret');
         $this->redirect_uri = Director::protocolAndHost() . $this->config()->get('redirect_uri');
@@ -72,7 +72,8 @@ class ApiController extends Controller
         $this->cookie_secret = $this->config()->get('cookie_secret');
     }
 
-    public function signup() {
+    public function signup()
+    {
         $this->login(true);
     }
 
@@ -82,12 +83,11 @@ class ApiController extends Controller
         $redirect_to = $this->request->getVar('redirect_to');
         $email = $this->request->getVar('email');
 
-        if($this->request->getVar('BackURL'))
-        {
+        if ($this->request->getVar('BackURL')) {
             $redirect_to = $this->request->getVar('BackURL');
         }
 
-        $extraAuth0Params = array();
+        $extraAuth0Params = [];
         $action="login";
 
         // Show register tab instead of login tab
@@ -95,14 +95,14 @@ class ApiController extends Controller
             $action='signup';
             // set config param for the lock so it opens up in signup tab
             if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
-                $extraAuth0Params = array(
+                $extraAuth0Params = [
                     'auth_action' => 'signup',
                     'locale' => Locale::getCurrentLocale()->Locale
-                );
+                ];
             } else {
-                $extraAuth0Params = array(
+                $extraAuth0Params = [
                     'auth_action' => 'signup'
-                );
+                ];
             }
         }
 
@@ -112,16 +112,15 @@ class ApiController extends Controller
 
         // Due to browser logging in and out could lead to invalid states
         // So we are now making sure every login request is unique
-        if (!$this->request->getVar('uid'))
-        {
-            return $this->redirect('/auth/'.$action.'?redirect_to=' . $redirect_to . '&uid=' . uniqid() . '&email=' . $email);
+        if (!$this->request->getVar('uid')) {
+            return $this->redirect('/auth/' . $action . '?redirect_to=' . $redirect_to . '&uid=' . uniqid() . '&email=' . $email);
         }
 
         $this->setup($redirect_to);
 
         $redirect = $this->redirect_uri .= '?redirect_to=' . $redirect_to;
 
-        return $this->redirect($this->auth0->login($redirect,$extraAuth0Params));
+        return $this->redirect($this->auth0->login($redirect, $extraAuth0Params));
     }
 
     public function logout()
@@ -129,15 +128,11 @@ class ApiController extends Controller
         $identityStore = Injector::inst()->get(IdentityStore::class);
         $identityStore->logOut($this->request);
 
-        //$auth_api = new Authentication(['domain'=>$this->domain, 'clientId'=>$this->client_id]);
-
         $this->setup();
         $auth_api = $this->auth0->authentication();
 
         $this->auth0->logout();
-        //$this->redirect('/');
         $this->redirect($auth_api->getLogoutLink(Director::absoluteBaseURL()));
-        //$this->redirect($auth_api->get_logout_link(Director::absoluteBaseURL(), $this->client_id));
     }
 
 
@@ -160,9 +155,6 @@ class ApiController extends Controller
             $this->auth0->exchange();
         }
 
-
-
-        //$user = $this->auth0->getUser();
         $user = $this->auth0->getCredentials();
 
         if ($user === null) {
@@ -173,9 +165,6 @@ class ApiController extends Controller
 
         $user = (array)$user->user;
 
-        /*echo "<pre/>";
-        print_r($user);
-        die();*/
         // the namespace is set in the Auth0 rule for
         // adding app_metadata and user_metadata to the response
         $namespace = $this->namespace;
@@ -215,13 +204,8 @@ class ApiController extends Controller
                 throw new \Error("No member was found with the default emailaddress: $default_mailaddress");
             }
         }
-        /* echo "<pre/>";
-         print_r($user);
-         die();*/
 
         self::updateUserData($user, false);
-
-
         $this->redirect($redirect_to);
     }
 
@@ -236,7 +220,7 @@ class ApiController extends Controller
     public function getIdByEmail(string $email)
     {
         $email_string = ':"' . urlencode($email) . '"';
-        $query_string = 'email' .$email_string . '&search_engine=v3';
+        $query_string = 'email' . $email_string . '&search_engine=v3';
 
         $response = $this->call_auth0("/api/v2/users?q=" . $query_string, "GET");
 
@@ -299,11 +283,11 @@ class ApiController extends Controller
         $connection = isset($input['connection']) ? $input['connection'] : null;
         $email = isset($input['email']) ? $input['email'] : null;
 
-        $fields = array(
+        $fields = [
             'client_id'     => $this->client_id,
             'user_metadata' => $user_metadata,
             'app_metadata'  => $app_metadata
-        );
+        ];
 
         if ($connection) {
             $fields["connection"] = ($input['connection'] == "auth0") ? 'Username-Password-Authentication' : $input['connection'];
@@ -325,9 +309,9 @@ class ApiController extends Controller
         $id = $member->Auth0Id;
 
         // The username field only works if it is enabled in auth0 -> connections -> database
-        $fields = array(
+        $fields = [
             'user_id' => $id,
-        );
+        ];
 
         $result = $this->call_auth0("/api/v2/jobs/verification-email", "POST", $fields);
 
@@ -347,7 +331,8 @@ class ApiController extends Controller
      * @return bool true if request succeeded
      * @throws GuzzleHttp\Exception\GuzzleException
      */
-    public function requestChangePassword(string $email) {
+    public function requestChangePassword(string $email)
+    {
         $this->setup();
         $token = self::getAuth0Token();
         $client = new GuzzleHttp\Client();
@@ -426,7 +411,7 @@ class ApiController extends Controller
             self::parseMetadata($app_metadata);
         }
 
-        if($on_auth0){
+        if ($on_auth0) {
             self::updateUserMetadata($user);
         }
 
@@ -452,12 +437,12 @@ class ApiController extends Controller
         ];
 
         // The username field only works if it is enabled in auth0 -> connections -> database
-        $fields = array(
+        $fields = [
             'email' => $email,
             'email_verified' => true,
             'connection' => 'Username-Password-Authentication',
             'password' => $password
-        );
+        ];
 
         $auth0user = null;
 
@@ -499,15 +484,15 @@ class ApiController extends Controller
         $audience = $this->url . '/api/v2/';
         if ($this->config()->get('m2m_audience') != '') {
             $audience=$this->config()->get('m2m_audience');
-        }     
+        }
        
         // TODO: sanity check for m2m config settings
-        $fields = array(
+        $fields = [
             'client_id' => $this->config()->get('m2m_client_id'),
             'client_secret' => $this->config()->get('m2m_client_secret'),
             'audience' => $audience,
             'grant_type' => 'client_credentials'
-        );
+        ];
 
         $client = new GuzzleHttp\Client();
 
@@ -581,8 +566,7 @@ class ApiController extends Controller
                 'scope' => $this->scope,
                 'cookieSecret' => $this->cookie_secret
             ]);
-        }
-        catch (\Auth0\SDK\Exception\CoreException $e) {
+        } catch (\Auth0\SDK\Exception\CoreException $e) {
             throw new \Error('Auth0 Core Exception: ' . $e);
         }
     }
