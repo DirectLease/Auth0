@@ -88,22 +88,13 @@ class ApiController extends Controller
         }
 
         $extraAuth0Params = [];
-        $action="login";
 
-        // Show register tab instead of login tab
-        if ($isSignup === true) {
-            $action='signup';
-            // set config param for the lock so it opens up in signup tab
-            if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
-                $extraAuth0Params = [
-                    'auth_action' => 'signup',
-                    'locale' => Locale::getCurrentLocale()->Locale
-                ];
-            } else {
-                $extraAuth0Params = [
-                    'auth_action' => 'signup'
-                ];
-            }
+        $action = ($isSignup === true) ? "signup" : "login";
+        $extraAuth0Params['auth_action'] = $action;
+
+        // set config param for the lock so it opens up in signup tab
+        if($this->config()->get('multi_locale')) { // multi_locale true sends the language of the locale
+            $extraAuth0Params['locale'] = Locale::getCurrentLocale()->Locale;
         }
 
         if ($email) {
