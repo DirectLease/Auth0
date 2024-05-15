@@ -200,11 +200,11 @@ class ApiController extends Controller
         $this->redirect($redirect_to);
     }
 
-    public function getAccessToken()
+    public function getAccessToken(): string | null
     {
         $this->setup();
         $user = $this->auth0->getCredentials();
-        return $user->accessToken;
+        return $user?->accessToken;
     }
 
 
@@ -555,6 +555,11 @@ class ApiController extends Controller
     {
         $redirect = $this->redirect_uri .= '?redirect_to=' . $url;
 
+        $audience = 'https://' . $this->domain . '/api/v2/';
+        if ($this->config()->get('m2m_audience') != '') {
+            $audience=$this->config()->get('m2m_audience');
+        }
+
         try {
             $this->auth0 = new Auth0([
                 'domain' => $this->domain,
@@ -563,7 +568,7 @@ class ApiController extends Controller
                 'redirectUri' => $redirect,
                 'scope' => $this->scope,
                 'cookieSecret' => $this->cookie_secret,
-                'audience' => ['https://' . $this->domain . '/api/v2/']
+                'audience' => [$audience]
             ]);
         } catch (\Auth0\SDK\Exception\CoreException $e) {
             throw new \Error('Auth0 Core Exception: ' . $e);
