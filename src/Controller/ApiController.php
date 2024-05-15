@@ -153,7 +153,7 @@ class ApiController extends Controller
             echo 'not logged in';
             return;
         }
-
+        
         $user = (array)$user->user;
 
         // the namespace is set in the Auth0 rule for
@@ -198,6 +198,13 @@ class ApiController extends Controller
 
         self::updateUserData($user, false);
         $this->redirect($redirect_to);
+    }
+
+    public function getAccessToken()
+    {
+        $this->setup();
+        $user = $this->auth0->getCredentials();
+        return $user->accessToken;
     }
 
 
@@ -555,7 +562,8 @@ class ApiController extends Controller
                 'clientSecret' => $this->client_secret,
                 'redirectUri' => $redirect,
                 'scope' => $this->scope,
-                'cookieSecret' => $this->cookie_secret
+                'cookieSecret' => $this->cookie_secret,
+                'audience' => ['https://' . $this->domain . '/api/v2/']
             ]);
         } catch (\Auth0\SDK\Exception\CoreException $e) {
             throw new \Error('Auth0 Core Exception: ' . $e);
