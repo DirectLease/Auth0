@@ -4,6 +4,8 @@ namespace DirectLease\Auth0;
 
 use Auth0\SDK\API\Authentication;
 use Auth0\SDK\Auth0;
+use Auth0\SDK\Configuration\SdkConfiguration;
+use Auth0\SDK\Token;
 use GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
 use SilverStripe\Control\Controller;
@@ -38,7 +40,7 @@ class ApiController extends Controller
 
 
     private $member;
-    private $auth0;
+    private Auth0 $auth0;
     private $domain;
     private $client_id;
     private $client_secret;
@@ -204,6 +206,11 @@ class ApiController extends Controller
     {
         $this->setup();
         $user = $this->auth0->getCredentials();
+
+        if($user?->accessTokenExpired){
+            $this->auth0->renew();
+        }
+
         return $user?->accessToken;
     }
 
