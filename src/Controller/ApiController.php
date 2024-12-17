@@ -364,19 +364,19 @@ class ApiController extends Controller
         $verified = isset($user['email_verified']) ? $user['email_verified'] : null;
         $id = isset($user['sub']) ? $user['sub'] : null;
         $mail = isset($user['email']) ? $user['email'] : null;
-        $app_metadata = isset($user['app_metadata']) ? $user['app_metadata'] : null;
+        $app_metadata = isset($user['app_metadata']) ? strip_tags($user['app_metadata']) : null;
         $user_metadata = isset($user['user_metadata']) ? $user['user_metadata'] : null;
-        $gender = isset($user_metadata["gender"]) ? $user_metadata["gender"] : null;
-        $firstname = isset($user_metadata['firstname']) ? $user_metadata['firstname'] : null;
-        $middlename = isset($user_metadata["insertion"]) ? $user_metadata["insertion"] : null;
-        $lastname = isset($user_metadata['lastname']) ? $user_metadata['lastname'] : null;
+        $gender = isset($user_metadata["gender"]) ? strip_tags($user_metadata["gender"]) : null;
+        $firstname = isset($user_metadata['firstname']) ? strip_tags($user_metadata['firstname']) : null;
+        $middlename = isset($user_metadata["insertion"]) ? strip_tags($user_metadata["insertion"]) : null;
+        $lastname = isset($user_metadata['lastname']) ? strip_tags($user_metadata['lastname']) : null;
 
         // Overwrites for Google
         if (isset($user['given_name'])) {
-            $firstname = $user['given_name'];
+            $firstname = strip_tags($user['given_name']);
         }
         if (isset($user['family_name'])) {
-            $lastname = $user['family_name'];
+            $lastname = strip_tags($user['family_name']);
         }
 
         // TODO: make a setting if you use the firstname and lastname from auth0
@@ -507,6 +507,7 @@ class ApiController extends Controller
 
         if (is_array($arr)) {
             foreach ($arr as $k => $v) {
+                $v = is_string($v) ? strip_tags($v) : $v;
                 $user->setProperty($k, $v);
             }
         }
