@@ -364,7 +364,7 @@ class ApiController extends Controller
         $verified = isset($user['email_verified']) ? $user['email_verified'] : null;
         $id = isset($user['sub']) ? $user['sub'] : null;
         $mail = isset($user['email']) ? $user['email'] : null;
-        $app_metadata = isset($user['app_metadata']) ? strip_tags($user['app_metadata']) : null;
+        $app_metadata = isset($user['app_metadata']) ? $user['app_metadata'] : null;
         $user_metadata = isset($user['user_metadata']) ? $user['user_metadata'] : null;
         $gender = isset($user_metadata["gender"]) ? strip_tags($user_metadata["gender"]) : null;
         $firstname = isset($user_metadata['firstname']) ? strip_tags($user_metadata['firstname']) : null;
