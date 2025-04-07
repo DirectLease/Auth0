@@ -3,6 +3,7 @@
 namespace DirectLease\Auth0;
 
 use Auth0\SDK\API\Authentication;
+use Auth0\SDK\API\Management;
 use Auth0\SDK\Auth0;
 use GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
@@ -156,6 +157,9 @@ class ApiController extends Controller
 
         $user = (array)$user->user;
 
+        $auth0user = $this->decodeJsonResponse($this->auth0->management()->users()->get($user["sub"]));
+        
+
         // the namespace is set in the Auth0 rule for
         // adding app_metadata and user_metadata to the response
         $namespace = $this->namespace;
@@ -166,12 +170,12 @@ class ApiController extends Controller
         }
 
         if (isset($user[$namespace . "user_metadata"])) {
-            $user["user_metadata"] = $user[$namespace . "user_metadata"];
+            $user["user_metadata"] = $auth0user["user_metadata"];
             unset($user[$namespace . "user_metadata"]);
         }
 
         if (isset($user[$namespace . "app_metadata"])) {
-            $user["app_metadata"] = $user[$namespace . "app_metadata"];
+            $user["app_metadata"] = $auth0user["app_metadata"];
             unset($user[$namespace . "app_metadata"]);
         }
 
@@ -198,6 +202,20 @@ class ApiController extends Controller
 
         self::updateUserData($user, false);
         $this->redirect($redirect_to);
+    }
+
+    /**
+     * Decodes a JSON response from a ResponseInterface.
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @return mixed
+     */
+    private function decodeJsonResponse(\Psr\Http\Message\ResponseInterface $response)
+    {
+        $body = $response->getBody();
+        // It is possible that the stream is allready accessed, so we need to rewind it to the beginning.
+        $body->rewind();
+        $content = $body->getContents();
+        return json_decode($content, true);
     }
 
 
