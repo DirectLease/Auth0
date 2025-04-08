@@ -41,6 +41,7 @@ class ApiController extends Controller
     private $member;
     private $auth0;
     private $domain;
+    private $custom_domain;
     private $client_id;
     private $client_secret;
     private $redirect_uri;
@@ -62,6 +63,7 @@ class ApiController extends Controller
         }
 
         $this->domain = $this->config()->get('domain');
+        $this->custom_domain = $this->config()->get('custom_domain');
         $this->client_id = $this->config()->get('client_id');
         $this->client_secret = $this->config()->get('client_secret');
         $this->redirect_uri = Director::protocolAndHost() . $this->config()->get('redirect_uri');
@@ -570,6 +572,7 @@ class ApiController extends Controller
         try {
             $this->auth0 = new Auth0([
                 'domain' => $this->domain,
+                'customDomain' => $this->custom_domain,
                 'clientId' => $this->client_id,
                 'clientSecret' => $this->client_secret,
                 'redirectUri' => $redirect,
