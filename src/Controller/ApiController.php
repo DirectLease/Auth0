@@ -85,6 +85,7 @@ class ApiController extends Controller
         // handle redirect back correctly
         $redirect_to = $this->request->getVar('redirect_to');
         $email = $this->request->getVar('email');
+        $context = $this->request->getVar('context');
 
         if ($this->request->getVar('BackURL')) {
             $redirect_to = $this->request->getVar('BackURL');
@@ -102,6 +103,10 @@ class ApiController extends Controller
 
         if ($email) {
             $extraAuth0Params['login_hint'] = $email;
+        }
+
+        if ($context) {
+            $extraAuth0Params['context'] = $context;
         }
 
         // Due to browser logging in and out could lead to invalid states
