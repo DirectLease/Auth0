@@ -39,7 +39,7 @@ class ApiController extends Controller
 
 
     private $member;
-    private $auth0;
+    private Auth0 $auth0;
     private $domain;
     private $custom_domain;
     private $client_id;
@@ -112,13 +112,12 @@ class ApiController extends Controller
         // Due to browser logging in and out could lead to invalid states
         // So we are now making sure every login request is unique
         if (!$this->request->getVar('uid')) {
-            return $this->redirect('/auth/' . $action . '?redirect_to=' . $redirect_to . '&uid=' . uniqid() . '&email=' . $email);
+            return $this->redirect('/auth/' . $action . '?redirect_to=' . $redirect_to . '&uid=' . uniqid() . '&email=' . $email . '&context=' . $context);
         }
 
         $this->setup($redirect_to);
 
         $redirect = $this->redirect_uri .= '?redirect_to=' . $redirect_to;
-
         return $this->redirect($this->auth0->login($redirect, $extraAuth0Params));
     }
 
