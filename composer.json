@@ -18,9 +18,7 @@
 		"issues": "https://github.com/DirectLease/Auth0/issues"
 	},
 	"require": {
-		"silverstripe/framework": "^4 || ^5",
-		"silverstripe/versioned": "^1 || ^2",
-		"silverstripe/vendor-plugin": "^1 || ^2",
+		"silverstripe/framework": "^4 || ^5 || ^6",
 		"auth0/auth0-php": "^8",
 		"guzzlehttp/guzzle": "^7",
 		"ext-json": "*",
