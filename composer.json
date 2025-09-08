@@ -21,8 +21,7 @@
 		"silverstripe/framework": "^4 || ^5 || ^6",
 		"auth0/auth0-php": "^8",
 		"guzzlehttp/guzzle": "^7",
-		"ext-json": "*",
-		"tractorcow/silverstripe-fluent": "^5||^6||^7"
+		"ext-json": "*"
 	},
 	"extra": {
 		"installer-name": "auth0",
