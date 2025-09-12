@@ -6,7 +6,7 @@ use DirectLease\Auth0\ApiController;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Configurable;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 /**
  * Class Auth0MemberExtension
@@ -15,7 +15,7 @@ use SilverStripe\ORM\DataExtension;
  * @package auth0
  */
 #[\AllowDynamicProperties]
-class MemberExtension extends DataExtension
+class MemberExtension extends Extension
 {
     use Configurable;
 
