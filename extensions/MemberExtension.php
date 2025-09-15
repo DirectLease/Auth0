@@ -1,7 +1,7 @@
 <?php
 
 namespace DirectLease\Auth0\Extensions;
-
+use SilverStripe\Control\Director;
 use DirectLease\Auth0\ApiController;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
@@ -37,11 +37,13 @@ class MemberExtension extends Extension
             }
         }
 
-        $session = $this->getSession();
-        $sessionData = $session->getAll();
+        if (!Director::is_cli()) { 
+            $session = $this->getSession();
+            $sessionData = $session->getAll();
 
-        if($sessionData) {
-            $this->restoreProperties($sessionData);
+            if($sessionData) {
+                $this->restoreProperties($sessionData);
+            }
         }
     }
 
